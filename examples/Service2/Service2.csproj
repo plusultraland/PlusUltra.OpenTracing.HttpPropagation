@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\PlusUltra.OpenTracing.HttpPropagation\PlusUltra.OpenTracing.HttpPropagation.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="jaeger" Version="0.3.7" />
+  </ItemGroup>
+  
+
+</Project>

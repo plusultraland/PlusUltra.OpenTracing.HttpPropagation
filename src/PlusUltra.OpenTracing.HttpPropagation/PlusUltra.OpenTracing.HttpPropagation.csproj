@@ -5,15 +5,15 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="2.0.0" />
-    <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="2.0.0" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="2.1.0" />
+    <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="2.1.0" />
     <PackageReference Include="OpenTracing" Version="0.12.1" />
   </ItemGroup>
 
   <ItemGroup>
-    <!-- Instrumented libraries (which are not visible as actual dependencies) -->
-    <PackageReference Include="Microsoft.AspNetCore.Hosting.Abstractions" Version="2.0.0" PrivateAssets="All" />
-    <PackageReference Include="Microsoft.AspNetCore.Mvc.Core" Version="2.0.0" PrivateAssets="All" />
+    <PackageReference Include="Microsoft.Extensions.Http" Version="2.1.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Hosting.Abstractions" Version="2.1.0" PrivateAssets="All" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Core" Version="2.1.0" PrivateAssets="All" />
     <PackageReference Include="GitVersionTask" Version="5.2.4">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>

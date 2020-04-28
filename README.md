@@ -19,21 +19,10 @@ services.AddControllers(options =>
 
 ## Injetar contexto com HttpCliente 
 
-Para injar o contexto quando usar HttpClient é necessário adicionar o handler ao seu DI:
+Quando os http cliente são construídos utilizando `HttpClientFactory` isso é feito de forma automática, quando configurado o `PropagateHttpTracingContext` no `IWebHostBuilder`
 
 ```csharp
-public void ConfigureServices(IServiceCollection services)
-{
-    services.AddHttpClientTracing();
-}
-```
-
-E então, adicionar o Handler na chamada do HttpCliente, um exemplo com `Refit`:
-
-```csharp
-public void ConfigureServices(IServiceCollection services)
-{
-    services.AddRefitCliente(configuration)
-            .AddHttpMessageHandler<TraceHttpRequestHandler>();
-}
+WebHost.CreateDefaultBuilder(args)
+    .UseStartup<Startup>()
+    .PropagateHttpTracingContext();
 ```
