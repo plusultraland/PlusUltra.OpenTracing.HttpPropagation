@@ -19,7 +19,7 @@ Para injar o contexto quando usar HttpClient é necessário adicionar o handler 
 ```csharp
 public void ConfigureServices(IServiceCollection services)
 {
-    services.AddHttpClientTracig();
+    services.AddHttpClientTracing();
 }
 ```
 

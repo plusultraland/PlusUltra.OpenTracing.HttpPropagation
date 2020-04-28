@@ -6,7 +6,7 @@ namespace Microsoft.Extensions.DependencyInjection
 {
     public static class ConfigureTracingExtensions
     {
-        public static IServiceCollection AddHttpClientTracig(this IServiceCollection services)
+        public static IServiceCollection AddHttpClientTracing(this IServiceCollection services)
         {
             services.AddTransient<TraceHttpRequestHandler>();
 
