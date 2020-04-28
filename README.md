@@ -6,7 +6,7 @@
 # PlusUltra.OpenTracing.HttpPropagation
 Conjunto de bibliotecas para substituir opentracing-contrib/csharp-netcore em relação a Http
 
-## Obter contexto no Action do controler
+## Obter contexto no Action do controller
 
 Para extrair o contexto de uma requisição recebida devemos adicionar o `Action Filter`, exemplo configurando de forma global:
 
@@ -17,7 +17,7 @@ services.AddControllers(options =>
 });
 ```
 
-## Injetar contexto com HttpCliente 
+## Injetar contexto no request usando HttpClientFactory
 
 Quando os http cliente são construídos utilizando `HttpClientFactory` isso é feito de forma automática, quando configurado o `PropagateHttpTracingContext` no `IWebHostBuilder`
 
