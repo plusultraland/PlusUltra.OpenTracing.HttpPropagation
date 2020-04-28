@@ -1,3 +1,8 @@
+[![Build Status](https://alefcarlos.visualstudio.com/PlusUltra/_apis/build/status/alefcarlos.PlusUltra.OpenTracing.HttpPropagation?branchName=master)](https://alefcarlos.visualstudio.com/PlusUltra/_build/latest?definitionId=25&branchName=master)
+
+[![Nuget](https://img.shields.io/nuget/v/PlusUltra.OpenTracing.HttpPropagation)](https://www.nuget.org/packages/PlusUltra.OpenTracing.HttpPropagation/)
+
+
 # PlusUltra.OpenTracing.HttpPropagation
 Conjunto de bibliotecas para substituir opentracing-contrib/csharp-netcore em relação a Http
 
