@@ -26,3 +26,10 @@ WebHost.CreateDefaultBuilder(args)
     .UseStartup<Startup>()
     .PropagateHttpTracingContext();
 ```
+
+## Exemplos
+
+![jaeger](resources/service1-service2-example.png "JAeger Example")
+
+Veja os projetos na pasta `examples` para ver a configuração completa
+
