@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Net.Http.Headers;
 using OpenTracing.Propagation;
 
-namespace PlusUltra.OpenTracing.HttpPropagation.Handlers
+namespace PlusUltra.OpenTracing.HttpPropagation.Outgoing
 {
     internal sealed class HttpHeadersInjectAdapter : ITextMap
     {

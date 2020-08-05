@@ -5,20 +5,20 @@ using OpenTracing;
 using OpenTracing.Propagation;
 using OpenTracing.Tag;
 
-namespace PlusUltra.OpenTracing.HttpPropagation.Handlers
+namespace PlusUltra.OpenTracing.HttpPropagation.Outgoing
 {
-    public class TraceHttpRequestHandler : DelegatingHandler
+    public class OutgoingTraceRequestHandler : DelegatingHandler
     {
-        public TraceHttpRequestHandler(ITracer tracer)
+        public OutgoingTraceRequestHandler(ITracer tracer)
         {
-            this.tracer = tracer;
+            _tracer = tracer;
         }
 
-        private readonly ITracer tracer;
+        private readonly ITracer _tracer;
 
         protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
         {
-            var spanBuilder = tracer.BuildSpan($"HTTP {request.Method.Method}")
+            var spanBuilder = _tracer.BuildSpan($"Fetch HTTP {request.Method.Method} {request.RequestUri}")
                 .WithTag(Tags.SpanKind, Tags.SpanKindClient)
                 .WithTag(Tags.HttpMethod, request.Method.ToString())
                 .WithTag(Tags.HttpUrl, request.RequestUri.ToString())
@@ -27,7 +27,7 @@ namespace PlusUltra.OpenTracing.HttpPropagation.Handlers
 
             using (var scope = spanBuilder.StartActive())
             {
-                tracer.Inject(scope.Span.Context, BuiltinFormats.HttpHeaders, new HttpHeadersInjectAdapter(request.Headers));
+                _tracer.Inject(scope.Span.Context, BuiltinFormats.HttpHeaders, new HttpHeadersInjectAdapter(request.Headers));
                 var result = await base.SendAsync(request, cancellationToken);
 
                 scope.Span.SetTag(Tags.HttpStatus, (int)result.StatusCode);

@@ -9,8 +9,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="jaeger" Version="0.3.7" />
+    <PackageReference Include="jaeger" Version="0.4.1" />
   </ItemGroup>
-  
+
 
 </Project>
