@@ -5,7 +5,7 @@
 
 # PlusUltra.OpenTracing.HttpPropagation
 
-Simple OpenTracing Http propagation
+This package basically extracts the OpenTracing context from incoming Http requests and creates child scopes for each outgoing Http request allowing you to easily track the communication to and from your microservices.
 
 ## Getting started
 
