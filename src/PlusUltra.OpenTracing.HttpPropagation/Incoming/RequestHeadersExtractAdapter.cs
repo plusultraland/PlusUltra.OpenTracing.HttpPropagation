@@ -4,9 +4,9 @@ using System.Collections.Generic;
 using Microsoft.AspNetCore.Http;
 using OpenTracing.Propagation;
 
-namespace PlusUltra.OpenTracing.HttpPropagation.Filters
+namespace PlusUltra.OpenTracing.HttpPropagation.Incoming
 {
-internal sealed class RequestHeadersExtractAdapter : ITextMap
+    internal sealed class RequestHeadersExtractAdapter : ITextMap
     {
         private readonly IHeaderDictionary _headers;
 

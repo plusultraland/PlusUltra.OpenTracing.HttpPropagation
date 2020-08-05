@@ -4,32 +4,52 @@
 
 
 # PlusUltra.OpenTracing.HttpPropagation
-Conjunto de bibliotecas para substituir opentracing-contrib/csharp-netcore em relação a Http
 
-## Obter contexto no Action do controller
+Simple OpenTracing Http propagation
 
-Para extrair o contexto de uma requisição recebida devemos adicionar o `Action Filter`, exemplo configurando de forma global:
+## Getting started
+
+Install the package:
+
+```
+Install-Package PlusUltra.OpenTracing.HttpPropagation
+```
+
+Register on your `ConfigureServices`:
 
 ```csharp
-services.AddControllers(options =>
+services.AddHttpTracingPropagation();
+```
+
+### Having an `ITracer` registered
+
+This tool requires you to provide an `ITracer` through dependency injection. If you have not done so already, you can register one like this:
+
+```csharp
+services.AddSingleton(serviceProvider =>
 {
-    opttion.AddTraceIncomingRequestFilter();
+    var loggerFactory = serviceProvider.GetRequiredService<ILoggerFactory>();
+    var senderResolver = new Jaeger.Senders.SenderResolver(loggerFactory);
+
+    Jaeger.Configuration.SenderConfiguration
+        .DefaultSenderResolver = senderResolver.RegisterSenderFactory<ThriftSenderFactory>();
+
+    var config = Jaeger.Configuration.FromIConfiguration(loggerFactory, Configuration);
+
+    return config.GetTracer();
 });
 ```
 
-## Injetar contexto no request usando HttpClientFactory
-
-Quando os http cliente são construídos utilizando `HttpClientFactory` isso é feito de forma automática, quando configurado o `PropagateHttpTracingContext` no `IWebHostBuilder`
-
-```csharp
-WebHost.CreateDefaultBuilder(args)
-    .UseStartup<Startup>()
-    .PropagateHttpTracingContext();
+appsettings.json:
+```json
+{
+  "JAEGER_SERVICE_NAME": "service1",
+  "JAEGER_SAMPLER_TYPE": "const"
+}
 ```
 
-## Exemplos
+## Examples
 
-![jaeger](resources/service1-service2-example.png "JAeger Example")
+![jaeger](resources/service1-service2-example.png "Jaeger Example")
 
-Veja os projetos na pasta `examples` para ver a configuração completa
-
+Check out the projects on `examples`.

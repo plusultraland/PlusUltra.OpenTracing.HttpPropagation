@@ -1,17 +1,10 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using Jaeger.Senders.Thrift;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using OpenTracing;
-using OpenTracing.Util;
 
 namespace Service2
 {
@@ -27,23 +20,21 @@ namespace Service2
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddControllers(options =>
-            {
-                options.AddTraceIncomingRequestFilter();
-            });
+            services.AddControllers();
 
-            services.AddSingleton<ITracer>(serviceProvider =>
+            services.AddHttpTracingPropagation();
+
+            services.AddSingleton(serviceProvider =>
             {
                 var loggerFactory = serviceProvider.GetRequiredService<ILoggerFactory>();
+                var senderResolver = new Jaeger.Senders.SenderResolver(loggerFactory);
+
+                Jaeger.Configuration.SenderConfiguration
+                    .DefaultSenderResolver = senderResolver.RegisterSenderFactory<ThriftSenderFactory>();
 
                 var config = Jaeger.Configuration.FromIConfiguration(loggerFactory, Configuration);
 
-                var tracer = config.GetTracer();
-
-                // Allows code that can't use DI to also access the tracer.
-                GlobalTracer.Register(tracer);
-
-                return tracer;
+                return config.GetTracer();
             });
         }
 
@@ -63,9 +54,6 @@ namespace Service2
             {
                 endpoints.MapControllers();
             });
-
-            //Ensure ITracer is initalized
-            app.ApplicationServices.GetRequiredService<ITracer>();
         }
     }
 }

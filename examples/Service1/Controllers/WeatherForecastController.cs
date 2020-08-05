@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -30,11 +29,15 @@ namespace Service1.Controllers
         public async Task<IActionResult> Get()
         {
             var request = new HttpRequestMessage(HttpMethod.Get,
-                "http://localhost:5002/WeatherForecast");
+                "http://localhost:5020/WeatherForecast");
 
             var client = httpClientFactory.CreateClient("client-service2");
 
             await client.SendAsync(request);
+
+            await client.SendAsync(new HttpRequestMessage(HttpMethod.Get,
+                "http://www.google.com"));
+
 
             var rng = new Random();
             return Ok(Enumerable.Range(1, 5).Select(index => new WeatherForecast
