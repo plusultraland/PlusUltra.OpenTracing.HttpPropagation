@@ -1,9 +1,9 @@
-using System;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Http;
 using PlusUltra.OpenTracing.HttpPropagation.Incoming;
 using PlusUltra.OpenTracing.HttpPropagation.Outgoing;
+using System;
 
 // ReSharper disable once CheckNamespace
 namespace Microsoft.Extensions.DependencyInjection

@@ -5,6 +5,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using PlusUltra.OpenTracing.HttpPropagation.Incoming.Configuration;
 
 namespace Service2
 {
@@ -35,6 +36,11 @@ namespace Service2
                 var config = Jaeger.Configuration.FromIConfiguration(loggerFactory, Configuration);
 
                 return config.GetTracer();
+            });
+
+            services.Configure<IncomingTraceOptions>(opt =>
+            {
+                opt.AddIgnoreUrl("/WeatherForecast/docs");
             });
         }
 
