@@ -1,8 +1,8 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 
 namespace Service2.Controllers
 {
@@ -21,6 +21,9 @@ namespace Service2.Controllers
         {
             _logger = logger;
         }
+
+        [HttpGet("docs")]
+        public IActionResult GetDocs() => Ok();
 
         [HttpGet]
         public IEnumerable<WeatherForecast> Get()

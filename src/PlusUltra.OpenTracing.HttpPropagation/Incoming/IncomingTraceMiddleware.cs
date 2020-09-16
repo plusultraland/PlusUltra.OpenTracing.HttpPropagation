@@ -1,10 +1,12 @@
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 using OpenTracing;
 using OpenTracing.Propagation;
 using OpenTracing.Tag;
+using PlusUltra.OpenTracing.HttpPropagation.Incoming.Configuration;
+using System.Threading.Tasks;
 
 namespace PlusUltra.OpenTracing.HttpPropagation.Incoming
 {
@@ -24,18 +26,28 @@ namespace PlusUltra.OpenTracing.HttpPropagation.Incoming
             var request = context.Request;
 
             var tracer = context.RequestServices.GetService<ITracer>();
+            var configurations = context.RequestServices.GetService<IOptions<IncomingTraceOptions>>().Value;
 
-            var extractedSpanContext = tracer.Extract(BuiltinFormats.HttpHeaders, new RequestHeadersExtractAdapter(request.Headers));
+            var shouldIgnore = configurations.ShouldIgnoreUrl(request.Path);
 
-            var spanBuilder = tracer.BuildSpan($"Serve HTTP {request.Method} {request.Path}")
-                .AsChildOf(extractedSpanContext)
-                .WithTag(Tags.SpanKind, Tags.SpanKindServer)
-                .WithTag(Tags.HttpMethod, request.Method)
-                .WithTag(Tags.HttpUrl, GetDisplayUrl(request));
-
-            using (spanBuilder.StartActive())
+            if (shouldIgnore)
             {
                 await _next(context);
+            }
+            else
+            {
+                var extractedSpanContext = tracer.Extract(BuiltinFormats.HttpHeaders, new RequestHeadersExtractAdapter(request.Headers));
+
+                var spanBuilder = tracer.BuildSpan($"Serve HTTP {request.Method} {request.Path}")
+                    .AsChildOf(extractedSpanContext)
+                    .WithTag(Tags.SpanKind, Tags.SpanKindServer)
+                    .WithTag(Tags.HttpMethod, request.Method)
+                    .WithTag(Tags.HttpUrl, GetDisplayUrl(request));
+
+                using (spanBuilder.StartActive())
+                {
+                    await _next(context);
+                }
             }
         }
 

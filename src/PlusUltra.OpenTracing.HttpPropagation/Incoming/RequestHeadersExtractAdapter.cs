@@ -1,8 +1,8 @@
+using Microsoft.AspNetCore.Http;
+using OpenTracing.Propagation;
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using Microsoft.AspNetCore.Http;
-using OpenTracing.Propagation;
 
 namespace PlusUltra.OpenTracing.HttpPropagation.Incoming
 {

@@ -1,8 +1,8 @@
+using OpenTracing.Propagation;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Net.Http.Headers;
-using OpenTracing.Propagation;
 
 namespace PlusUltra.OpenTracing.HttpPropagation.Outgoing
 {

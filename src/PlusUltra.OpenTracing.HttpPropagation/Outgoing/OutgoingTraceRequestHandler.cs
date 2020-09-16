@@ -5,6 +5,9 @@ using System.Threading.Tasks;
 using OpenTracing;
 using OpenTracing.Propagation;
 using OpenTracing.Tag;
+using System.Net.Http;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace PlusUltra.OpenTracing.HttpPropagation.Outgoing
 {

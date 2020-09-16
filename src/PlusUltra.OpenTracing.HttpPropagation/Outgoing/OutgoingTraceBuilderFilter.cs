@@ -1,6 +1,6 @@
-using System;
 using Microsoft.Extensions.Http;
 using OpenTracing;
+using System;
 
 namespace PlusUltra.OpenTracing.HttpPropagation.Outgoing
 {
