@@ -1,3 +1,4 @@
+using System;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
@@ -18,7 +19,7 @@ namespace PlusUltra.OpenTracing.HttpPropagation.Outgoing
 
         protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
         {
-            var spanBuilder = _tracer.BuildSpan($"Fetch HTTP {request.Method.Method} {request.RequestUri}")
+            var spanBuilder = _tracer.BuildSpan($"Fetch HTTP {request.Method.Method} {request.RequestUri.GetLeftPart(UriPartial.Path)}")
                 .WithTag(Tags.SpanKind, Tags.SpanKindClient)
                 .WithTag(Tags.HttpMethod, request.Method.ToString())
                 .WithTag(Tags.HttpUrl, request.RequestUri.ToString())

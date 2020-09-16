@@ -29,7 +29,7 @@ namespace Service1.Controllers
         public async Task<IActionResult> Get()
         {
             var request = new HttpRequestMessage(HttpMethod.Get,
-                "http://localhost:5020/WeatherForecast");
+                "http://localhost:5020/WeatherForecast?teste=1");
 
             var client = httpClientFactory.CreateClient("client-service2");
 
