@@ -5,9 +5,6 @@ using System.Threading.Tasks;
 using OpenTracing;
 using OpenTracing.Propagation;
 using OpenTracing.Tag;
-using System.Net.Http;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace PlusUltra.OpenTracing.HttpPropagation.Outgoing
 {
@@ -29,17 +26,29 @@ namespace PlusUltra.OpenTracing.HttpPropagation.Outgoing
                 .WithTag(Tags.PeerHostname, request.RequestUri.Host)
                 .WithTag(Tags.PeerPort, request.RequestUri.Port);
 
-            using (var scope = spanBuilder.StartActive())
+            using var scope = spanBuilder.StartActive();
+
+            _tracer.Inject(scope.Span.Context, BuiltinFormats.HttpHeaders, new HttpHeadersInjectAdapter(request.Headers));
+
+            try
             {
-                _tracer.Inject(scope.Span.Context, BuiltinFormats.HttpHeaders, new HttpHeadersInjectAdapter(request.Headers));
                 var result = await base.SendAsync(request, cancellationToken);
 
-                scope.Span.SetTag(Tags.HttpStatus, (int)result.StatusCode);
+                Tags.HttpStatus.Set(scope.Span, (int)result.StatusCode);
 
                 if (!result.IsSuccessStatusCode)
+                {
                     Tags.Error.Set(scope.Span, true);
+                }
 
                 return result;
+            }
+            catch (Exception ex)
+            {
+                Tags.Error.Set(scope.Span, true);
+                scope.Span.SetTag("http.exception", ex.Message);
+
+                throw;
             }
         }
     }
