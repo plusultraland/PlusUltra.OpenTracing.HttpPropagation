@@ -1,3 +1,5 @@
+using System;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.Extensions.DependencyInjection;
@@ -6,7 +8,6 @@ using OpenTracing;
 using OpenTracing.Propagation;
 using OpenTracing.Tag;
 using PlusUltra.OpenTracing.HttpPropagation.Incoming.Configuration;
-using System.Threading.Tasks;
 
 namespace PlusUltra.OpenTracing.HttpPropagation.Incoming
 {
@@ -25,29 +26,42 @@ namespace PlusUltra.OpenTracing.HttpPropagation.Incoming
         {
             var request = context.Request;
 
-            var tracer = context.RequestServices.GetService<ITracer>();
-            var configurations = context.RequestServices.GetService<IOptions<IncomingTraceOptions>>().Value;
-
-            var shouldIgnore = configurations.ShouldIgnoreUrl(request.Path);
-
+            var options = context.RequestServices.GetService<IOptions<IncomingTraceOptions>>().Value;
+            var shouldIgnore = options.ShouldIgnoreUrl(request.Path);
             if (shouldIgnore)
             {
                 await _next(context);
+                return;
             }
-            else
+
+            var tracer = context.RequestServices.GetService<ITracer>();
+            var extractedSpanContext = tracer.Extract(BuiltinFormats.HttpHeaders, new RequestHeadersExtractAdapter(request.Headers));
+
+            var spanBuilder = tracer.BuildSpan($"Serve HTTP {request.Method} {request.Path}")
+                .AsChildOf(extractedSpanContext)
+                .WithTag(Tags.SpanKind, Tags.SpanKindServer)
+                .WithTag(Tags.HttpMethod, request.Method)
+                .WithTag(Tags.HttpUrl, GetDisplayUrl(request));
+
+            using var scope = spanBuilder.StartActive();
+
+            try
             {
-                var extractedSpanContext = tracer.Extract(BuiltinFormats.HttpHeaders, new RequestHeadersExtractAdapter(request.Headers));
+                await _next(context);
 
-                var spanBuilder = tracer.BuildSpan($"Serve HTTP {request.Method} {request.Path}")
-                    .AsChildOf(extractedSpanContext)
-                    .WithTag(Tags.SpanKind, Tags.SpanKindServer)
-                    .WithTag(Tags.HttpMethod, request.Method)
-                    .WithTag(Tags.HttpUrl, GetDisplayUrl(request));
+                Tags.HttpStatus.Set(scope.Span, context.Response.StatusCode);
 
-                using (spanBuilder.StartActive())
+                if (context.Response.StatusCode > 399)
                 {
-                    await _next(context);
+                    Tags.Error.Set(scope.Span, true);
                 }
+            }
+            catch (Exception ex)
+            {
+                Tags.Error.Set(scope.Span, true);
+                scope.Span.SetTag("http.exception", ex.Message);
+
+                throw;
             }
         }
 
