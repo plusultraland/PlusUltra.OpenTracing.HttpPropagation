@@ -13,7 +13,7 @@ namespace PlusUltra.OpenTracing.HttpPropagation.Incoming
 {
     public class IncomingTraceMiddleware
     {
-        internal static readonly string NoHostSpecified = string.Empty;
+        private static readonly string NoHostSpecified = string.Empty;
 
         private readonly RequestDelegate _next;
 
@@ -41,7 +41,8 @@ namespace PlusUltra.OpenTracing.HttpPropagation.Incoming
                 .AsChildOf(extractedSpanContext)
                 .WithTag(Tags.SpanKind, Tags.SpanKindServer)
                 .WithTag(Tags.HttpMethod, request.Method)
-                .WithTag(Tags.HttpUrl, GetDisplayUrl(request));
+                .WithTag(Tags.HttpUrl, GetDisplayUrl(request))
+                .WithTag("operation.id", System.Diagnostics.Activity.Current.RootId);
 
             using var scope = spanBuilder.StartActive();
 
